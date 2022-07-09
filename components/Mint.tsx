@@ -1,22 +1,32 @@
-import { useCallback, useEffect, useState } from 'react';
-import { ethers, Contract, utils, BigNumber, ContractTransaction } from 'ethers';
-import { useMoralis, useWeb3ExecuteFunction } from 'react-moralis';
-import { useNotification, Icon, Loading } from 'web3uikit';
-import type { TIconType } from 'web3uikit/dist/components/Icon/collection';
+import { useCallback, useEffect, useState } from "react";
+import {
+  ethers,
+  Contract,
+  utils,
+  BigNumber,
+  ContractTransaction,
+} from "ethers";
+import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
+import { useNotification, Icon, Loading, ConnectButton } from "web3uikit";
+import type { TIconType } from "web3uikit/dist/components/Icon/collection";
 import type {
   IPosition,
   notifyType,
-} from 'web3uikit/dist/components/Notification/types';
+} from "web3uikit/dist/components/Notification/types";
 
-import ABI from '../config/abi.json';
-import contractConfig from '../config/contract-config.json';
-import { getContractAddress, checkChainIdIncluded } from '../utils/chain';
-import { getProof, checkAllowlisted } from '../utils/allowlist';
+import ABI from "../config/abi.json";
+import contractConfig from "../config/contract-config.json";
+import { getContractAddress, checkChainIdIncluded } from "../utils/chain";
+import { getProof, checkAllowlisted } from "../utils/allowlist";
 
 type CustomErrors = {
   [key: string]: string;
 };
-
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
 export default function Mint() {
   const { maxSupply, saleType, gasToken, customErrors } = contractConfig;
 
@@ -35,12 +45,15 @@ export default function Mint() {
 
   const dispatch = useNotification();
 
-  const address = "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4";
+  const address = "0xE3E819593300001842AeD39165680E584Cb7AEaB";
 
-  const [provider, setProvider] = useState();
-  const [queenOfLust, setQueenOfLust] = useState();
-  // const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-  // const queenOfLust = new ethers.Contract(address, ABI, provider.getSigner(0));
+  // const [provider, setProvider] = useState<any>();
+  const [queenOfLust, setQueenOfLust] = useState<Contract>();
+  useEffect(() => {
+    if (!isWeb3Enabled) return;
+    const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+    setQueenOfLust(new ethers.Contract(address, ABI, provider.getSigner(0)));
+  }, [isWeb3Enabled]);
 
   // allowlistMint() function
   const {
@@ -50,7 +63,7 @@ export default function Mint() {
   } = useWeb3ExecuteFunction({
     abi: ABI,
     contractAddress: contractAddress,
-    functionName: 'mint',
+    functionName: "mint",
     params: {
       _mintAmount: mintAmount,
       _merkleProof: proof,
@@ -69,7 +82,7 @@ export default function Mint() {
   } = useWeb3ExecuteFunction({
     abi: ABI,
     contractAddress: contractAddress,
-    functionName: 'publicMint',
+    functionName: "publicMint",
     params: {
       _mintAmount: mintAmount,
     },
@@ -82,25 +95,25 @@ export default function Mint() {
   const { fetch: getSaleState } = useWeb3ExecuteFunction({
     abi: ABI,
     contractAddress: contractAddress,
-    functionName: 'getSaleState',
+    functionName: "getSaleState",
   });
 
   const { fetch: getMintPrice } = useWeb3ExecuteFunction({
     abi: ABI,
     contractAddress: contractAddress,
-    functionName: 'getMintPrice',
+    functionName: "getMintPrice",
   });
 
   const { fetch: getMaxMintAmountPerTx } = useWeb3ExecuteFunction({
     abi: ABI,
     contractAddress: contractAddress,
-    functionName: 'getMaxMintAmountPerTx',
+    functionName: "getMaxMintAmountPerTx",
   });
 
   const { fetch: getTotalSupply } = useWeb3ExecuteFunction({
     abi: ABI,
     contractAddress: contractAddress,
-    functionName: 'totalSupply',
+    functionName: "totalSupply",
   });
 
   const updateUiValues = useCallback(async () => {
@@ -149,7 +162,7 @@ export default function Mint() {
       message,
       title,
       icon,
-      position: position || 'bottomR',
+      position: position || "bottomR",
     });
   }
 
@@ -157,10 +170,10 @@ export default function Mint() {
     await tx.wait(1);
     updateUiValues();
     handleNotification(
-      'success',
-      'Successfully minted!',
-      'Transaction Notification',
-      'checkmark'
+      "success",
+      "Successfully minted!",
+      "Transaction Notification",
+      "checkmark"
     );
   }
 
@@ -176,14 +189,23 @@ export default function Mint() {
 
   function handleOnError(error: Error) {
     handleNotification(
-      'error',
+      "error",
       handleErrorMessage(error),
-      'Transaction Notification',
-      'xCircle'
+      "Transaction Notification",
+      "xCircle"
     );
   }
 
   async function mint() {
+    if (!queenOfLust) return;
+    // console.log(queenOfLust);
+    // const num: BigNumber = await queenOfLust.getMintableAmount(0);
+    const price = "74000000000000000";
+    // const wei = Utils.etherToWei(Number(price) * count);
+
+    await queenOfLust.mint(1, 2, { value: price, gasLimit: "30000000" });
+    // console.log(num.toNumber());
+
     // if (saleState === 0) return;
     // if (saleState === 1) {
     //   await allowlistMint({
@@ -199,7 +221,6 @@ export default function Mint() {
     //     onError: (error) => handleOnError(error),
     //   });
     // }
-
     // console.log(queenOfLust.getMintableAmout(0));
   }
 
@@ -219,9 +240,9 @@ export default function Mint() {
           <div className="space-y-1">
             <div className="text-gray-400">Sale:</div>
             <div className="text-lg sm:text-2xl">
-              {saleState === 0 && 'Closed'}
-              {saleState === 1 && 'Allowlist Only'}
-              {saleState === 2 && 'Public Open'}
+              {saleState === 0 && "Closed"}
+              {saleState === 1 && "Allowlist Only"}
+              {saleState === 2 && "Public Open"}
             </div>
           </div>
         </div>
@@ -236,7 +257,7 @@ export default function Mint() {
               <button
                 type="button"
                 className={`rounded-full p-2 ${
-                  mintAmount <= 1 ? 'bg-gray-800 cursor-default' : 'bg-gray-600'
+                  mintAmount <= 1 ? "bg-gray-800 cursor-default" : "bg-gray-600"
                 }`}
                 onClick={decrementMintAmount}
               >
@@ -249,8 +270,8 @@ export default function Mint() {
                 type="button"
                 className={`rounded-full p-2 ${
                   mintAmount >= maxMintAmountPerTx
-                    ? 'bg-gray-800 cursor-default'
-                    : 'bg-gray-600'
+                    ? "bg-gray-800 cursor-default"
+                    : "bg-gray-600"
                 }`}
                 onClick={incrementMintAmount}
               >
@@ -259,7 +280,7 @@ export default function Mint() {
             </div>
 
             <div className="text-center text-lg">
-              <span className="text-gray-400">Total Price:</span>{' '}
+              <span className="text-gray-400">Total Price:</span>{" "}
               {console.log(mintPrice)}
               {/* {utils.formatEther(mintPrice.mul(mintAmount))} {gasToken} */}
             </div>
@@ -278,8 +299,8 @@ export default function Mint() {
                   type="button"
                   className={`rounded px-4 py-2 font-bold w-full ${
                     !isWeb3Enabled || !isChainIdIncluded
-                      ? 'bg-gray-700 cursor-not-allowed'
-                      : 'bg-blue-700 hover:bg-blue-600'
+                      ? "bg-gray-700 cursor-not-allowed"
+                      : "bg-blue-700 hover:bg-blue-600"
                   }`}
                   disabled={!isWeb3Enabled || !isChainIdIncluded}
                   onClick={mint}
@@ -291,9 +312,10 @@ export default function Mint() {
           </div>
         )}
         {!isWeb3Enabled && (
-          <div className="text-red-500 text-center mt-4">
-            Not connected to your wallet!
-          </div>
+          // <div className="text-red-500 text-center mt-4">
+          //   Not connected to your wallet!
+          // </div>
+          <ConnectButton moralisAuth={false} />
         )}
         {isWeb3Enabled && !isChainIdIncluded && (
           <div className="text-red-500 text-center mt-4">
