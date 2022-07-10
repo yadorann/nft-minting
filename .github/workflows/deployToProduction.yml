@@ -42,4 +42,4 @@ jobs:
             newname=`echo "$filename" | sed 's/.[^.]$//'`
             aws s3 cp "${dirname}/$filename" "s3://mint.mib19metaspace.com/$newname" --content-type "text/html"
           done
-          aws cloudfront create-invalidation --distribution-id E3H14LQ6Y64601 --paths "/*"
+          aws cloudfront create-invalidation --distribution-id E1YQLFVWP7F0N7 --paths "/*"
