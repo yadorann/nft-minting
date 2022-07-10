@@ -22,7 +22,7 @@ const Home: NextPage = () => {
 
       <Image src={topImage} alt={nftName} />
 
-      <div className="bg-gray-800 py-16">
+      {/* <div className="bg-gray-800 py-16">
         <Prose>
           <h1 className="text-5xl font-bold mb-4">{nftName}</h1>
 
@@ -36,7 +36,7 @@ const Home: NextPage = () => {
             culpa qui officia deserunt mollit anim id est laborum.
           </p>
         </Prose>
-      </div>
+      </div> */}
 
       <div className="py-16">
         <Prose>
@@ -44,7 +44,7 @@ const Home: NextPage = () => {
         </Prose>
       </div>
 
-      <div className="bg-gray-800 py-16">
+      {/* <div className="bg-gray-800 py-16">
         <Prose>
           <Faq />
         </Prose>
@@ -60,7 +60,7 @@ const Home: NextPage = () => {
         <Prose>
           <Team />
         </Prose>
-      </div>
+      </div> */}
     </Layout>
   );
 };

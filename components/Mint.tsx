@@ -231,20 +231,20 @@ export default function Mint() {
       <div className="border border-t-red-300 border-r-blue-300 border-b-green-300 border-l-yellow-300 rounded p-8">
         <div className="flex justify-around border-b border-gray-700 pb-8">
           <div className="space-y-1">
-            <div className="text-gray-400">Supply:</div>
+            <div className="text-gray-400 text-center">Supply</div>
             <div className="text-lg sm:text-2xl">
               <span className="text-pink-500">{totalSupply}</span> / {maxSupply}
             </div>
           </div>
 
-          <div className="space-y-1">
+          {/* <div className="space-y-1">
             <div className="text-gray-400">Sale:</div>
             <div className="text-lg sm:text-2xl">
               {saleState === 0 && "Closed"}
               {saleState === 1 && "Allowlist Only"}
               {saleState === 2 && "Public Open"}
             </div>
-          </div>
+          </div> */}
         </div>
 
         {saleState === 0 || (saleState === 1 && !isAllowlisted) ? (
