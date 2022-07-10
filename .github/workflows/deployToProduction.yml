@@ -35,11 +35,11 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          aws s3 sync out s3://qolmint --region ap-northeast-2 --delete
+          aws s3 sync out s3://mint.mib19metaspace.com --region ap-northeast-2 --delete
           find ./ -type f -name ".html" | while read fname; do
             dirname=dirname "$fname"
             filename=basename "$fname"
             newname=`echo "$filename" | sed 's/.[^.]$//'`
-            aws s3 cp "${dirname}/$filename" "s3://qolmint/$newname" --content-type "text/html"
+            aws s3 cp "${dirname}/$filename" "s3://mint.mib19metaspace.com/$newname" --content-type "text/html"
           done
           aws cloudfront create-invalidation --distribution-id E3H14LQ6Y64601 --paths "/*"
