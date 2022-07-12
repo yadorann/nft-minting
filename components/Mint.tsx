@@ -339,6 +339,8 @@ export default function Mint() {
                   </button>
                 )}
 
+              </div>
+            </div>
                 <div className="border-t border-gray-800 flex flex-col items-center mt-10 py-2 w-full">
                   <h3 className="font-coiny text-2xl text-brand-pink uppercase mt-6">
                     Contract Address
@@ -349,11 +351,9 @@ export default function Mint() {
                     rel="noopener noreferrer"
                     className="text-gray-400 mt-4"
                   >
-                    <span className="break-all ...">{'1111'}</span>
+                    <span className="break-all ...">{'0x1c7A1EE39961263282BF534E203bA97Ad1CEeE78'}</span>
                   </a>
                 </div>
-              </div>
-            </div>
         </div>
       </div>
 
