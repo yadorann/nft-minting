@@ -15,7 +15,7 @@ export default function Header() {
 
   return (
     <div className="sticky top-0 z-50">
-      <header className="bg-gray-900 border-b py-4">
+      <header className="min-w-full text-gray-800 py-4 px-4 md:px-0">
         <Container>
           <div className="flex justify-between items-center">
             <NextLink href="/" className="text-2xl font-bold text-white">
@@ -32,7 +32,7 @@ export default function Header() {
             </NextLink>
 
             <div className="flex items-center space-x-2 ml-2 sm:ml-0">
-              <div className="hidden lg:flex space-x-2">
+              {/* <div className="hidden lg:flex space-x-2">
                 <a
                   href={process.env.NEXT_PUBLIC_OPENSEA_COLLECTION_URL}
                   aria-label={`${nftName} on OpenSea`}
@@ -74,7 +74,7 @@ export default function Header() {
                 >
                   <Icon fill="#fff" svg="eth" />
                 </a>
-              </div>
+              </div> */}
 
               <ConnectButton moralisAuth={false} />
             </div>

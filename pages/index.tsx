@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import Image from 'next/image';
+import BG from '../public/assets/blur.jpeg';
 import type { NextPage } from 'next';
 
 import Layout from '../components/Layout';
@@ -20,7 +21,7 @@ const Home: NextPage = () => {
         <title>{nftName}</title>
       </Head>
 
-      <Image src={topImage} alt={nftName} />
+      {/* <Image src={topImage} alt={nftName} /> */}
 
       {/* <div className="bg-gray-800 py-16">
         <Prose>
@@ -38,11 +39,18 @@ const Home: NextPage = () => {
         </Prose>
       </div> */}
 
-      <div className="py-16">
-        <Prose>
-          <Mint />
-        </Prose>
-      </div>
+      <div className="min-h-screen h-full w-full overflow-hidden flex flex-col items-center justify-center bg-brand-background ">
+        <div className="relative w-full h-full flex flex-col items-center justify-center">
+          <img
+            src="/assets/blur.jpeg"
+            className="animate-pulse-slow absolute inset-auto block w-full min-h-screen object-cover"
+          />
+
+          <Prose>
+            <Mint />
+          </Prose>
+        </div>
+        </div>
 
       {/* <div className="bg-gray-800 py-16">
         <Prose>

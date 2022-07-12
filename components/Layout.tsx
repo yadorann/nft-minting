@@ -13,7 +13,7 @@ export default function Layout({ children, pageTitle }: Props) {
       <Meta pageTitle={pageTitle} />
       <Header />
       <main>{children}</main>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

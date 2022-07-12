@@ -14,9 +14,9 @@ export default function Meta({ pageTitle }: Props) {
   const ogType = router.pathname === '/' ? 'website' : 'article';
   const ogTitle = pageTitle
     ? pageTitle
-    : 'An NFT collection of 10,000 unique characters';
+    : 'An NFT collection of 5,000 unique characters';
   const ogImage = `${process.env.NEXT_PUBLIC_SITE_URL}/assets/card-image.png`;
-  const description = `${nftName} is an NFT collection of 10,000 unique characters.`;
+  const description = `${nftName} is an NFT collection of 5,000 unique characters.`;
 
   return (
     <Head>
