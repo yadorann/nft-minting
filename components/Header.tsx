@@ -1,17 +1,17 @@
-import Image from 'next/image';
-import { useMoralis } from 'react-moralis';
-import { ConnectButton, Icon } from 'web3uikit';
+import Image from 'next/image'
+import { useMoralis } from 'react-moralis'
+import { ConnectButton, Icon } from 'web3uikit'
 
-import Container from './Container';
-import NextLink from './NextLink';
-import Logo from '../public/assets/logo.png';
-import contractConfig from '../config/contract-config.json';
-import { parseChainId, getContractAddress } from '../utils/chain';
+import Container from './Container'
+import NextLink from './NextLink'
+import Logo from '../public/assets/logo.png'
+import contractConfig from '../config/contract-config.json'
+import { parseChainId, getContractAddress } from '../utils/chain'
 
 export default function Header() {
-  const { nftName } = contractConfig;
-  const { chainId: chainIdHex } = useMoralis();
-  const contractAddress = getContractAddress(chainIdHex);
+  const { nftName } = contractConfig
+  const { chainId: chainIdHex } = useMoralis()
+  const contractAddress = getContractAddress(chainIdHex)
 
   return (
     <div className="sticky top-0 z-50">
@@ -82,5 +82,5 @@ export default function Header() {
         </Container>
       </header>
     </div>
-  );
+  )
 }

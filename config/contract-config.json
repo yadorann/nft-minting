@@ -1,7 +1,7 @@
 {
-  "contractName": "QOL",
-  "nftName": "QOL Nft",
-  "nftSymbol": "QOL",
+  "contractName": "MIB19 Metaspace",
+  "nftName": "MIB19 Metaspace",
+  "nftSymbol": "MIBQ",
   "maxSupply": "5000",
   "saleType": {
     "allowlistSale": { "mintPrice": "0.02", "maxMintAmountPerTx": "5" },

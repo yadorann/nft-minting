@@ -1,11 +1,11 @@
-import Footer from './Footer';
-import Header from './Header';
-import Meta from './Meta';
+import Footer from './Footer'
+import Header from './Header'
+import Meta from './Meta'
 
 type Props = {
-  children: React.ReactNode;
-  pageTitle?: string;
-};
+  children: React.ReactNode
+  pageTitle?: string
+}
 
 export default function Layout({ children, pageTitle }: Props) {
   return (
@@ -15,5 +15,5 @@ export default function Layout({ children, pageTitle }: Props) {
       <main>{children}</main>
       {/* <Footer /> */}
     </>
-  );
+  )
 }

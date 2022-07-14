@@ -1,19 +1,19 @@
-import Head from 'next/head';
-import Image from 'next/image';
-import BG from '../public/assets/blur.jpeg';
-import type { NextPage } from 'next';
+import Head from 'next/head'
+import Image from 'next/image'
+import BG from '../public/assets/blur.jpeg'
+import type { NextPage } from 'next'
 
-import Layout from '../components/Layout';
-import Prose from '../components/Prose';
-import Mint from '../components/Mint';
-import Faq from '../components/Faq';
-import Team from '../components/Team';
-import Roadmap from '../components/Roadmap';
-import topImage from '../public/assets/1920x600.png';
-import contractConfig from '../config/contract-config.json';
+import Layout from '../components/Layout'
+import Prose from '../components/Prose'
+import Mint from '../components/Mint'
+import Faq from '../components/Faq'
+import Team from '../components/Team'
+import Roadmap from '../components/Roadmap'
+import topImage from '../public/assets/1920x600.png'
+import contractConfig from '../config/contract-config.json'
 
 const Home: NextPage = () => {
-  const { nftName } = contractConfig;
+  const { nftName } = contractConfig
 
   return (
     <Layout>
@@ -50,7 +50,7 @@ const Home: NextPage = () => {
             <Mint />
           </Prose>
         </div>
-        </div>
+      </div>
 
       {/* <div className="bg-gray-800 py-16">
         <Prose>
@@ -70,7 +70,7 @@ const Home: NextPage = () => {
         </Prose>
       </div> */}
     </Layout>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
