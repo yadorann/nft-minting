@@ -23,16 +23,27 @@ declare global {
   }
 }
 
-const sales = [
+type SaleType = {
+  saleType: 'OG SALE' | 'WHITELIST SALE' | 'PUBLIC SALE'
+  step: number
+  amount: number
+  price: string
+  saleStartTime: number
+  saleEndTime: number
+}
+
+const sales: SaleType[] = [
   {
     saleType: 'OG SALE',
+    step: 0,
     amount: 700,
     price: '50000000000000000',
     saleStartTime: 1657888200,
     saleEndTime: 1657891769
   },
   {
-    saleType: 'WHITE LIST SALE',
+    saleType: 'WHITELIST SALE',
+    step: 1,
     amount: 2000,
     price: '60000000000000000',
     saleStartTime: 1657891800,
@@ -40,6 +51,7 @@ const sales = [
   },
   {
     saleType: 'PUBLIC SALE',
+    step: 2,
     amount: 2300,
     price: '74000000000000000',
     saleStartTime: 1657895400,
@@ -67,12 +79,12 @@ export default function Mint() {
   const isAllowlisted = checkAllowlisted(account)
   const contractAddress = getContractAddress(chainIdHex)
   const isChainIdIncluded = checkChainIdIncluded(chainIdHex)
-
+  const [currentSale, setCurrentSale] = useState<SaleType>(getSale())
   const [saleState, setSaleState] = useState(getSale().saleType)
   const [mintPrice, setMintPrice] = useState(
     (parseInt(getSale().price) / 10) ^ 18
   )
-
+  const [totalPrice, setTotalPrice] = useState(0)
   const [maxMintAmountPerTx, setMaxMintAmountPerTx] = useState(0)
   const [totalSupply, setTotalSupply] = useState(0)
   const [mintAmount, setMintAmount] = useState(0)
@@ -83,110 +95,52 @@ export default function Mint() {
 
   const address = '0xE3E819593300001842AeD39165680E584Cb7AEaB'
 
-  // const [provider, setProvider] = useState<any>();
-  const [queenOfLust, setQueenOfLust] = useState<Contract>()
+  const [contract, setContract] = useState<Contract>()
+
   useEffect(() => {
     if (!isWeb3Enabled) return
     const provider = new ethers.providers.Web3Provider(window.ethereum as any)
-    setQueenOfLust(new ethers.Contract(address, ABI, provider.getSigner(0)))
+    setContract(new ethers.Contract(address, ABI, provider.getSigner(0)))
   }, [isWeb3Enabled])
 
-  // allowlistMint() function
-  const {
-    fetch: allowlistMint,
-    isFetching: isFetchingAM,
-    isLoading: isLoadingAM
-  } = useWeb3ExecuteFunction({
-    abi: ABI,
-    contractAddress: contractAddress,
-    functionName: 'mint',
-    params: {
-      _mintAmount: mintAmount,
-      _merkleProof: proof
-    },
-    msgValue: utils
-      .parseEther(saleType.allowlistSale.mintPrice)
-      .mul(mintAmount)
-      .toString()
-  })
-
-  //getMintableAmount(step)
-  //mint
-
-  // publicMint() function
-  const {
-    fetch: publicMint,
-    isFetching: isFetchingPM,
-    isLoading: isLoadingPM
-  } = useWeb3ExecuteFunction({
-    abi: ABI,
-    contractAddress: contractAddress,
-    functionName: 'publicMint',
-    params: {
-      _mintAmount: mintAmount
-    },
-    msgValue: utils
-      .parseEther(saleType.publicSale.mintPrice)
-      .mul(mintAmount)
-      .toString()
-  })
-
-  const { fetch: getSaleState } = useWeb3ExecuteFunction({
-    abi: ABI,
-    contractAddress: contractAddress,
-    functionName: 'getSaleState'
-  })
-
-  const { fetch: getMintPrice } = useWeb3ExecuteFunction({
-    abi: ABI,
-    contractAddress: contractAddress,
-    functionName: 'getMintPrice'
-  })
-
-  const { fetch: getMaxMintAmountPerTx } = useWeb3ExecuteFunction({
-    abi: ABI,
-    contractAddress: contractAddress,
-    functionName: 'getMaxMintAmountPerTx'
-  })
-
-  const { fetch: getTotalSupply } = useWeb3ExecuteFunction({
-    abi: ABI,
-    contractAddress: contractAddress,
-    functionName: 'totalSupply'
-  })
-
-  const updateUiValues = useCallback(async () => {
-    const saleStateFromCall = (await getSaleState()) as number
-    const mintPriceFromCall = (await getMintPrice()) as BigNumber
-    const maxMintAmountPerTxFromCall = (await getMaxMintAmountPerTx()) as BigNumber
-    const totalSupplyFromCall = (await getTotalSupply()) as BigNumber
-    setSaleState(saleStateFromCall)
-    setMintPrice(mintPriceFromCall)
-    setMaxMintAmountPerTx(5)
-    // setMaxMintAmountPerTx(maxMintAmountPerTxFromCall.toNumber());
-    // setTotalSupply(totalSupplyFromCall.toNumber());
-  }, [getMaxMintAmountPerTx, getMintPrice, getSaleState, getTotalSupply])
-
   useEffect(() => {
-    if (isWeb3Enabled && isChainIdIncluded) {
-      updateUiValues()
-
+    if (contract && isWeb3Enabled && isChainIdIncluded) {
+      //OG sale
+      if (currentSale.saleType === 'OG SALE') mintListAddress()
+      //Whitelist sale
+      else if (currentSale.saleType === 'WHITELIST SALE') whiteListAddress()
+      //Public sale
+      else setMintAmount(20)
       // cleanup
       return () => {
-        setSaleState(0)
-        setMintPrice(BigNumber.from(0))
+        setMintPrice(0)
         setMaxMintAmountPerTx(2)
         setTotalSupply(0)
       }
     }
-  }, [isChainIdIncluded, isWeb3Enabled, updateUiValues])
+  }, [contract, isChainIdIncluded, isWeb3Enabled])
+
+  const mintListAddress = async () => {
+    if (!contract) return
+    const mintAmount = await contract.mintListAddress(account)
+    setMintAmount(mintAmount)
+  }
+  const whiteListAddress = async () => {
+    if (!contract) return
+    const mintAmount = await contract.whiteListAddress(account)
+    setMintAmount(mintAmount)
+  }
 
   function decrementMintAmount() {
-    setMintAmount(Math.max(1, mintAmount))
+    const amount = Math.max(0, mintAmount - 1)
+    setMintAmount(amount)
+    setTotalPrice(mintPrice * amount)
   }
 
   function incrementMintAmount() {
-    setMintAmount(Math.min(maxMintAmountPerTx, mintAmount))
+    const amount = Math.min(maxMintAmountPerTx, mintAmount + 1)
+    setMintAmount(amount)
+    setTotalPrice(mintPrice * amount)
   }
 
   function handleNotification(
@@ -207,7 +161,7 @@ export default function Mint() {
 
   async function handleOnSuccess(tx: ContractTransaction) {
     await tx.wait(1)
-    updateUiValues()
+    // updateUiValues()
     handleNotification(
       'success',
       'Successfully minted!',
@@ -235,67 +189,38 @@ export default function Mint() {
     )
   }
 
-  async function mint() {
-    if (!queenOfLust) return
-    // console.log(queenOfLust);
-    // const num: BigNumber = await queenOfLust.getMintableAmount(0);
-    const pricelist = [
-      '50000000000000000',
-      '60000000000000000',
-      '74000000000000000'
-    ]
-    // const wei = Utils.etherToWei(Number(price) * count);
-    await queenOfLust.mint(mintAmount, 2, {
-      value: price,
+  const mint = async () => {
+    if (!contract) return
+    let tx = null
+    tx = await contract.mint(mintAmount, currentSale.step, {
+      value: parseInt(currentSale.price) * mintAmount,
       gasLimit: '30000000'
     })
 
-    // console.log((await queenOfLust.getMintableAmount(2)).toString());
-
-    // console.log(num.toNumber());
-
-    // if (saleState === 0) return;
-    // if (saleState === 1) {
-    //   await allowlistMint({
-    //     onSuccess: async (tx) =>
-    //       await handleOnSuccess(tx as ContractTransaction),
-    //     onError: (error) => handleOnError(error),
-    //   });
-    // }
-    // if (saleState === 2) {
-    //   await publicMint({
-    //     onSuccess: async (tx) =>
-    //       await handleOnSuccess(tx as ContractTransaction),
-    //     onError: (error) => handleOnError(error),
-    //   });
-    // }
-    // console.log(queenOfLust.getMintableAmout(0));
+    const receipt = await tx.wait()
+    if (receipt.status === 0) {
+      throw new Error('Failed')
+    }
   }
 
   useInterval(() => {
-    // const currentTime = new Date().getTime()
-    // setRemainTime(currentTime - getSale().saleStartTime)
     const currentSale = getSale()
     const timeStr = new Date(currentSale.saleStartTime * 1000).toISOString()
-    setRemainTime(timer.getRemainTimeStr(timeStr))
-    setTotalAmount(currentSale.amount)
     const price = parseInt(BigInt(parseInt(getSale().price)).toString())
 
+    setRemainTime(timer.getRemainTimeStr(timeStr))
     setMintPrice(price / Math.pow(10, 18))
-    // console.log( parseInt(BigInt(bigNumber).toString()));
+    setCurrentSale(currentSale)
+    setTotalAmount(currentSale.amount)
   }, 1000)
 
   return (
     <>
       <div className="flex flex-col items-center justify-center h-full w-full px-2 md:px-10">
         <div className="relative z-1 md:max-w-3xl w-full bg-gray-900/90 filter backdrop-blur-sm py-4 rounded-md px-2 md:px-10 flex flex-col items-center">
-          <h1 className="font-bold text-3xl">{remainTime}</h1>
           <h1 className="font-coiny uppercase font-bold text-3xl md:text-4xl bg-gradient-to-br  from-brand-green to-brand-blue bg-clip-text text-transparent mt-3">
             {saleState}
           </h1>
-          <h3 className="text-sm text-pink-200 tracking-widest">
-            0x1c7A1EE39961263282BF534E203bA97Ad1CEeE78
-          </h3>
           <div className="flex flex-col md:flex-row md:space-x-14 w-full mt-10 md:mt-14">
             <div className="relative w-full">
               <div className="font-coiny z-10 absolute top-2 left-2 opacity-80 filter backdrop-blur-lg text-base px-4 py-2 bg-black border border-brand-purple rounded-md flex items-center justify-center text-white font-semibold">
@@ -315,7 +240,7 @@ export default function Mint() {
               <div className="font-coiny flex items-center justify-between w-full">
                 <button
                   className="w-14 h-10 md:w-16 md:h-12 flex items-center justify-center text-brand-background hover:shadow-lg bg-gray-300 font-bold rounded-md"
-                  onClick={incrementMintAmount}
+                  onClick={decrementMintAmount}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -339,7 +264,7 @@ export default function Mint() {
 
                 <button
                   className="w-14 h-10 md:w-16 md:h-12 flex items-center justify-center text-brand-background hover:shadow-lg bg-gray-300 font-bold rounded-md"
-                  onClick={decrementMintAmount}
+                  onClick={incrementMintAmount}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -359,7 +284,7 @@ export default function Mint() {
               </div>
 
               <p className="text-sm text-pink-200 tracking-widest mt-3">
-                Max Mint Amount: {2}
+                Max Mint Amount: {mintAmount}
               </p>
 
               <div className="border-t border-b py-4 mt-16 w-full">
@@ -369,33 +294,31 @@ export default function Mint() {
                   <div className="flex items-center space-x-3">
                     {/* <p>{Number.parseFloat(mintPrice).toFixed(3)} ETH</p>{' '} */}
                     {/* {parseInt(BigInt(mintPrice).toString()} */}
-                    {mintPrice * mintAmount}ETH
+                    {totalPrice}ETH
                   </div>
                 </div>
               </div>
-
-              {/* Mint Button && Connect Wallet Button */}
-
-              {queenOfLust ? (
-                <button
-                  className={`font-coiny mt-12 w-full px-6 py-3 rounded-md text-2xl text-white  mx-4 tracking-wide uppercase`}
-                  disabled={!isWeb3Enabled || !isChainIdIncluded}
-                  onClick={mint}
-                >
-                  Mint
-                </button>
-              ) : (
-                // <button
-                //   className="font-coiny mt-12 w-full bg-gradient-to-br from-brand-purple to-brand-pink shadow-lg px-6 py-3 rounded-md text-2xl text-white hover:shadow-pink-400/50 mx-4 tracking-wide uppercase"
-                //   onClick={() => mint()}
-                // >
-                //   Connect Wallet
-                // </button>
-                <ConnectButton moralisAuth={false} />
-              )}
+              <h1 className="font-bold text-3xl mt-5">{remainTime}</h1>
             </div>
           </div>
-          <div className="border-t border-gray-800 flex flex-col items-center mt-10 py-2 w-full">
+          <div className="border-t border-gray-800 flex flex-col items-center mt-5 py-2 w-full">
+            {contract ? (
+              <button
+                className={`font-coiny mt-5 ${
+                  mintAmount ? 'bg-pink-500' : 'bg-gray-500'
+                } w-full px-6 py-3 rounded-md text-2xl  ${
+                  mintAmount ? 'text-white' : 'text-gray'
+                }   mx-4 tracking-wide uppercase`}
+                disabled={!mintAmount || !isWeb3Enabled || !isChainIdIncluded}
+                onClick={mint}
+              >
+                Mint
+              </button>
+            ) : (
+              <div className="mt-10">
+                <ConnectButton moralisAuth={false} />
+              </div>
+            )}
             <h3 className="font-coiny text-2xl text-brand-pink uppercase mt-6">
               Contract Address
             </h3>
@@ -412,117 +335,6 @@ export default function Mint() {
           </div>
         </div>
       </div>
-
-      {/* <div className="border border-t-red-300 border-r-blue-300 border-b-green-300 border-l-yellow-300 rounded p-8">
-        <div className="flex justify-around border-b border-gray-700 pb-8">
-          <div className="space-y-1">
-            <div className="text-gray-400 text-center">Supply</div>
-            <div className="text-lg sm:text-2xl">
-              <span className="text-pink-500">{totalSupply}</span> / {maxSupply}
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <div className="text-gray-400">Sale:</div>
-            <div className="text-lg sm:text-2xl">
-              {saleState === 0 && "Closed"}
-              {saleState === 1 && "Allowlist Only"}
-              {saleState === 2 && "Public Open"}
-            </div>
-          </div>
-        </div>
-
-        {saleState === 0 || (saleState === 1 && !isAllowlisted) ? (
-          <div className="mt-8">
-            <Icon fill="#fff" size={64} svg="lockClosed" />
-          </div>
-        ) : (
-          <div className="pt-8 space-y-4">
-            <div className="flex justify-center items-center space-x-8">
-              <button
-                type="button"
-                className={`rounded-full p-2 ${
-                  mintAmount <= 1 ? "bg-gray-800 cursor-default" : "bg-gray-600"
-                }`}
-                onClick={decrementMintAmount}
-              >
-                <Icon fill="#fff" svg="minus" />
-              </button>
-
-              <span className="text-xl">{mintAmount}</span>
-
-              <button
-                type="button"
-                className={`rounded-full p-2 ${
-                  mintAmount >= maxMintAmountPerTx
-                    ? "bg-gray-800 cursor-default"
-                    : "bg-gray-600"
-                }`}
-                onClick={incrementMintAmount}
-              >
-                <Icon fill="#fff" svg="plus" />
-              </button>
-            </div>
-
-            <div className="text-center text-lg">
-              <span className="text-gray-400">Total Price:</span>{" "}
-              {mintPrice} {gasToken}
-              {console.log(mintPrice)}
-              {utils.formatEther(mintPrice.mul(mintAmount))} {gasToken}
-              {gasToken}
-            </div>
-
-            <div>
-              {isFetchingAM || isLoadingAM || isFetchingPM || isLoadingPM ? (
-                <button
-                  type="button"
-                  className="flex justify-center rounded px-4 py-2 w-full bg-blue-800 cursor-not-allowed"
-                  disabled
-                >
-                  <Loading size={24} spinnerColor="#fff" />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className={`rounded px-4 py-2 font-bold w-full ${
-                    !isWeb3Enabled || !isChainIdIncluded
-                      ? "bg-gray-700 cursor-not-allowed"
-                      : "bg-blue-700 hover:bg-blue-600"
-                  }`}
-                  disabled={!isWeb3Enabled || !isChainIdIncluded}
-                  onClick={mint}
-                >
-                  Mint
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-        {!isWeb3Enabled && (
-          <div className="text-red-500 text-center mt-4">
-            Not connected to your wallet!
-          </div>
-          <ConnectButton moralisAuth={false} />
-        )}
-        {isWeb3Enabled && !isChainIdIncluded && (
-          <div className="text-red-500 text-center mt-4">
-            Switch to {process.env.NEXT_PUBLIC_NETWORK_NAME}
-          </div>
-        )}
-        {isWeb3Enabled && isChainIdIncluded && saleState === 0 && (
-          <div className="text-red-500 text-center mt-4">
-            Sales are closed now.
-          </div>
-        )}
-        {isWeb3Enabled &&
-          isChainIdIncluded &&
-          saleState === 1 &&
-          !isAllowlisted && (
-            <div className="text-red-500 text-center mt-4">
-              Address is not allowlisted.
-            </div>
-          )}
-      </div> */}
     </>
   )
 }
