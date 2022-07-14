@@ -18,6 +18,7 @@ import ABI from "../config/abi.json";
 import contractConfig from "../config/contract-config.json";
 import { getContractAddress, checkChainIdIncluded } from "../utils/chain";
 import { getProof, checkAllowlisted } from "../utils/allowlist";
+import Countdown from './Countdown';
 
 type CustomErrors = {
   [key: string]: string;
@@ -138,7 +139,7 @@ export default function Mint() {
       return () => {
         setSaleState(0);
         setMintPrice(BigNumber.from(0));
-        setMaxMintAmountPerTx(0);
+        setMaxMintAmountPerTx(2);
         setTotalSupply(0);
       };
     }
@@ -202,7 +203,7 @@ export default function Mint() {
     if (!queenOfLust) return;
     // console.log(queenOfLust);
     // const num: BigNumber = await queenOfLust.getMintableAmount(0);
-    const price = "74000000000000000";
+    const pricelist = ["50000000000000000","60000000000000000","74000000000000000"];
     // const wei = Utils.etherToWei(Number(price) * count);
     await queenOfLust.mint(mintAmount, 2, { value: price, gasLimit: "30000000" });
 
@@ -232,6 +233,7 @@ export default function Mint() {
     <>
       <div className="flex flex-col items-center justify-center h-full w-full px-2 md:px-10">
         <div className="relative z-1 md:max-w-3xl w-full bg-gray-900/90 filter backdrop-blur-sm py-4 rounded-md px-2 md:px-10 flex flex-col items-center">
+          <Countdown date={`2022-07-15T21:00:00`} />
           <h1 className="font-coiny uppercase font-bold text-3xl md:text-4xl bg-gradient-to-br  from-brand-green to-brand-blue bg-clip-text text-transparent mt-3">
             {/* {paused ? 'Paused' : isPreSale ? 'Pre-Sale' : 'Public Sale'} */}
             Public Sale
@@ -326,17 +328,19 @@ export default function Mint() {
                 {queenOfLust ? (
                   <button
                     className={`font-coiny mt-12 w-full px-6 py-3 rounded-md text-2xl text-white  mx-4 tracking-wide uppercase`}
+                    disabled={!isWeb3Enabled || !isChainIdIncluded}
                     onClick={mint}
                   >
                     Mint
                   </button>
                 ) : (
-                  <button
-                    className="font-coiny mt-12 w-full bg-gradient-to-br from-brand-purple to-brand-pink shadow-lg px-6 py-3 rounded-md text-2xl text-white hover:shadow-pink-400/50 mx-4 tracking-wide uppercase"
-                    // onClick={() => connect()}
-                  >
-                    Connect Wallet
-                  </button>
+                  // <button
+                  //   className="font-coiny mt-12 w-full bg-gradient-to-br from-brand-purple to-brand-pink shadow-lg px-6 py-3 rounded-md text-2xl text-white hover:shadow-pink-400/50 mx-4 tracking-wide uppercase"
+                  //   onClick={() => mint()}
+                  // >
+                  //   Connect Wallet
+                  // </button>
+                  <ConnectButton moralisAuth={false} />
                 )}
 
               </div>
