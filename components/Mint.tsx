@@ -129,7 +129,7 @@ export default function Mint() {
 
   const dispatch = useNotification()
 
-  const address = '0xE3E819593300001842AeD39165680E584Cb7AEaB'
+  const address = '0xCf818F1453F13d8B1E93a907dB67E0Fb6cd061B3'
 
   const [contract, setContract] = useState<Contract>()
 
