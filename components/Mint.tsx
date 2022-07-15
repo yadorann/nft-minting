@@ -126,14 +126,14 @@ export default function Mint() {
 
   const [mintAmount, setMintAmount] = useState(0)
   const [totalAmount, setTotalAmount] = useState(getSale().amount)
-  const [txHash, setTxHash] = useState<any | undefined>()
+  const [txHash, setTxHash] = useState<string | undefined>()
   const [remainAmount, setRemainAmount] = useState(0)
   const [remainTime, setRemainTime] = useState('--:--:--')
 
   const dispatch = useNotification()
 
   // const address = '0xCf818F1453F13d8B1E93a907dB67E0Fb6cd061B3'
-  const address = '0xaE9FdA3Ca8C368551A1d2d945cdbBCf87B475D99'
+  const address = '0xE3E819593300001842AeD39165680E584Cb7AEaB'
 
   const [contract, setContract] = useState<Contract>()
 
@@ -150,8 +150,14 @@ export default function Mint() {
       //Whitelist sale
       else if (currentSale.saleType === 'WHITELIST SALE') whiteListAddress()
       //Public sale
-      else if (currentSale.saleType === 'PUBLIC SALE') setMaxMintAmountPerTx(20)
-      else setMaxMintAmountPerTx(0)
+      else if (currentSale.saleType === 'PUBLIC SALE') {
+        setMintAmount(1)
+        const price = parseInt(currentSale.price) / Math.pow(10, 18)
+        setMintPrice(price)
+        setTotalPrice(price)
+
+        setMaxMintAmountPerTx(20)
+      } else setMaxMintAmountPerTx(0)
       // cleanup
       return () => {
         setMintPrice(0)
@@ -238,23 +244,27 @@ export default function Mint() {
   const mint = async () => {
     if (!contract || currentSale.saleType === 'SALE NOT STARTED') return
     let tx = null
-    tx = await contract.mint(mintAmount, currentSale.step, {
-      value: (parseInt(currentSale.price) * mintAmount).toString(),
-      gasLimit: '3000000'
-    })
-    // console.log(tx)
-    const receipt = await tx.wait()
-    console.log(receipt)
-    setTxHash(tx)
-    if (receipt.status === 0) {
-      throw new Error('Failed')
-    } else {
-      setTxHash('')
-      if (currentSale.saleType === 'OG SALE') await mintListAddress()
-      //Whitelist sale
-      else if (currentSale.saleType === 'WHITELIST SALE')
-        await whiteListAddress()
-      //Public sale
+    try {
+      tx = await contract.mint(mintAmount, currentSale.step, {
+        value: (parseInt(currentSale.price) * mintAmount).toString(),
+        gasLimit: '150000'
+      })
+      // console.log(tx.transactionHash)
+      // setTxHash(tx.transactionHashblockHash)
+      const receipt = await tx.wait()
+      console.log(receipt)
+      if (receipt.status === 0) {
+        throw new Error('Failed')
+      } else {
+        // setTxHash(undefined)
+        if (currentSale.saleType === 'OG SALE') await mintListAddress()
+        //Whitelist sale
+        else if (currentSale.saleType === 'WHITELIST SALE')
+          await whiteListAddress()
+        //Public sale
+      }
+    } catch (err) {
+      console.log(err)
     }
   }
 
