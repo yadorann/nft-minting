@@ -52,10 +52,10 @@ const sales: SaleType[] = [
     step: 0,
     amount: 700,
     price: '50000000000000000',
-    saleStartTime: 1657888200,
-    saleEndTime: 1657891800
-    // saleStartTime: 1657879137,
-    // saleEndTime: 1657882737
+    // saleStartTime: 1657888200,
+    // saleEndTime: 1657891800
+    saleStartTime: 1657879137,
+    saleEndTime: 1657886337
   },
   {
     saleType: 'WHITELIST SALE',
@@ -72,12 +72,11 @@ const sales: SaleType[] = [
     step: 2,
     amount: 5000,
     price: '74000000000000000',
-    // saleStartTime: 1657895400,
-    // saleEndTime: 1657899000
-    // saleStartTime: 1657822980,
-    // saleEndTime: 1657931400
-    saleStartTime: 1657879137,
-    saleEndTime: 1657882737
+    saleStartTime: 1657895400,
+    saleEndTime: 1657899000
+
+    // saleStartTime: 1657879137,
+    // saleEndTime: 1657882737
   },
   {
     saleType: 'SALE END!',
@@ -249,14 +248,13 @@ export default function Mint() {
         value: (parseInt(currentSale.price) * mintAmount).toString(),
         gasLimit: '150000'
       })
-      // console.log(tx.transactionHash)
-      // setTxHash(tx.transactionHashblockHash)
+      setTxHash(tx.hash)
       const receipt = await tx.wait()
       console.log(receipt)
       if (receipt.status === 0) {
         throw new Error('Failed')
       } else {
-        // setTxHash(undefined)
+        setTxHash(undefined)
         if (currentSale.saleType === 'OG SALE') await mintListAddress()
         //Whitelist sale
         else if (currentSale.saleType === 'WHITELIST SALE')
