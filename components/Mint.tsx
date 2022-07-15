@@ -44,17 +44,18 @@ const sales: SaleType[] = [
     amount: 0,
     price: '0',
     saleStartTime: 0,
-    saleEndTime: 1657888200
+    // saleEndTime: 1657888200
+    saleEndTime: 1657882737
   },
   {
     saleType: 'OG SALE',
     step: 0,
     amount: 700,
     price: '50000000000000000',
-    saleStartTime: 1657888200,
-    saleEndTime: 1657891800
-    // saleStartTime: 1657822980,
-    // saleEndTime: 1657826580
+    // saleStartTime: 1657888200,
+    // saleEndTime: 1657891800
+    saleStartTime: 1657879137,
+    saleEndTime: 1657882737
   },
   {
     saleType: 'WHITELIST SALE',
