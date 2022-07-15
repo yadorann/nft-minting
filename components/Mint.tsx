@@ -44,10 +44,10 @@ const sales: SaleType[] = [
     amount: 0,
     price: '0',
     //real start time
-    // saleStartTime: 0,
-    // saleEndTime: 1657888200
     saleStartTime: 0,
-    saleEndTime: 1657879137
+    saleEndTime: 1657888200
+    // saleStartTime: 0,
+    // saleEndTime: 1657879137
   },
   {
     saleType: 'OG SALE',
@@ -77,10 +77,10 @@ const sales: SaleType[] = [
     amount: 5000,
     price: '74000000000000000',
     //real starttime
-    // saleStartTime: 1657895400,
-    // saleEndTime: 1657899000
-    saleStartTime: 1657879137,
-    saleEndTime: 1657886337
+    saleStartTime: 1657895400,
+    saleEndTime: 1657899000
+    // saleStartTime: 1657879137,
+    // saleEndTime: 1657886337
   },
   {
     saleType: 'SALE END!',
@@ -92,7 +92,8 @@ const sales: SaleType[] = [
   }
 ]
 
-const SALE_END_TIME = 1657931400
+const SALE_END_TIME = 1657899000
+// const SALE_END_TIME = 1657931400
 const getSale = () => {
   const currentTime = Math.floor(new Date().getTime() / 1000)
   if (currentTime > SALE_END_TIME) return sales[4]
