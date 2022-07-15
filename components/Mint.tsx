@@ -267,7 +267,7 @@ export default function Mint() {
     try {
       tx = await contract.mint(mintAmount, currentSale.step, {
         value: (parseInt(currentSale.price) * mintAmount).toString(),
-        gasLimit: '100000'
+        gasLimit: '200000'
       })
       setTxHash(tx.hash)
       const receipt = await tx.wait()
