@@ -45,7 +45,7 @@ const sales: SaleType[] = [
     price: '0',
     saleStartTime: 0,
     // saleEndTime: 1657888200
-    saleEndTime: 1657882737
+    saleEndTime: 1657879137
   },
   {
     saleType: 'OG SALE',
