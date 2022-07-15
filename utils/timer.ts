@@ -9,7 +9,6 @@ dayjs.extend(utc);
 
 export const getRemainTimeArr = (endTime: Dayjs) => {
   const startTime = dayjs().utc();
-  console.log(endTime);
   const diff = endTime.diff(startTime);
   const diffDay = Math.floor(diff / (1000 * 60 * 60 * 24));
   const diffHour = Math.floor((diff / (1000 * 60 * 60)) % 24);

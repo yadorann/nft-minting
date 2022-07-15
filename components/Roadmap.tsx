@@ -1,4 +1,3 @@
-console.log(1);
 export default function Roadmap() {
   return (
     <>
@@ -25,5 +24,5 @@ export default function Roadmap() {
         </li>
       </ul>
     </>
-  );
+  )
 }

@@ -52,10 +52,10 @@ const sales: SaleType[] = [
     step: 0,
     amount: 700,
     price: '50000000000000000',
-    // saleStartTime: 1657888200,
-    // saleEndTime: 1657891800
-    saleStartTime: 1657879137,
-    saleEndTime: 1657882737
+    saleStartTime: 1657888200,
+    saleEndTime: 1657891800
+    // saleStartTime: 1657879137,
+    // saleEndTime: 1657882737
   },
   {
     saleType: 'WHITELIST SALE',
@@ -74,8 +74,10 @@ const sales: SaleType[] = [
     price: '74000000000000000',
     // saleStartTime: 1657895400,
     // saleEndTime: 1657899000
-    saleStartTime: 1657822980,
-    saleEndTime: 1657931400
+    // saleStartTime: 1657822980,
+    // saleEndTime: 1657931400
+    saleStartTime: 1657879137,
+    saleEndTime: 1657882737
   },
   {
     saleType: 'SALE END!',
@@ -124,13 +126,14 @@ export default function Mint() {
 
   const [mintAmount, setMintAmount] = useState(0)
   const [totalAmount, setTotalAmount] = useState(getSale().amount)
-  const [txHash, setTxHash] = useState<string | undefined>()
+  const [txHash, setTxHash] = useState<any | undefined>()
   const [remainAmount, setRemainAmount] = useState(0)
   const [remainTime, setRemainTime] = useState('--:--:--')
 
   const dispatch = useNotification()
 
-  const address = '0xCf818F1453F13d8B1E93a907dB67E0Fb6cd061B3'
+  // const address = '0xCf818F1453F13d8B1E93a907dB67E0Fb6cd061B3'
+  const address = '0xaE9FdA3Ca8C368551A1d2d945cdbBCf87B475D99'
 
   const [contract, setContract] = useState<Contract>()
 
@@ -239,8 +242,10 @@ export default function Mint() {
       value: (parseInt(currentSale.price) * mintAmount).toString(),
       gasLimit: '3000000'
     })
-    setTxHash(tx)
+    // console.log(tx)
     const receipt = await tx.wait()
+    console.log(receipt)
+    setTxHash(tx)
     if (receipt.status === 0) {
       throw new Error('Failed')
     } else {
@@ -289,16 +294,20 @@ export default function Mint() {
       currentSale.saleType === 'SALE END!'
     )
       return
-    const BN = await contract.getMintableAmount(currentSale.step)
-    const mintableAmount = parseInt(BigInt(BN).toString())
-
-    setRemainAmount(mintableAmount)
+    console.log(currentSale.step)
+    try {
+      const BN = await contract.getMintableAmount(2)
+      const mintableAmount = parseInt(BigInt(BN).toString())
+      setRemainAmount(mintableAmount)
+    } catch (err) {
+      console.log(err)
+    }
   }, 15000)
 
   return (
     <>
       <div className="flex overflow-hidden  items-center justify-center pt-20 w-[90vw] md:h-full md:w-full px-2 md:px-10">
-        {chainIdHex && chainIdHex !== '0x1' && (
+        {/* {chainIdHex && chainIdHex !== '0x1' && (
           <>
             <div className="fixed top-0 left-0 w-screen h-screen z-10 bg-black/80" />
             <div className="absolute flex w-screen justify-center align-middle items-center">
@@ -314,7 +323,7 @@ export default function Mint() {
               </div>
             </div>
           </>
-        )}
+        )} */}
         {txHash && (
           <>
             <div className="fixed top-0 left-0 w-screen h-screen z-10 bg-black/80" />
