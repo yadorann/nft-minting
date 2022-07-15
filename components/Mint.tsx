@@ -43,6 +43,8 @@ const sales: SaleType[] = [
     step: 0,
     amount: 0,
     price: '0',
+    // saleStartTime: 0,
+    // saleEndTime: 1657888200
     saleStartTime: 0,
     saleEndTime: 1657879137
   },
