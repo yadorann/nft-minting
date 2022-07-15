@@ -303,9 +303,8 @@ export default function Mint() {
       currentSale.saleType === 'SALE END!'
     )
       return
-    console.log(currentSale.step)
     try {
-      const BN = await contract.getMintableAmount(2)
+      const BN = await contract.getMintableAmount(currentSale.step)
       const mintableAmount = parseInt(BigInt(BN).toString())
       setRemainAmount(mintableAmount)
     } catch (err) {
