@@ -1,27 +1,27 @@
-import Head from 'next/head';
-import { useRouter } from 'next/router';
+import Head from 'next/head'
+import { useRouter } from 'next/router'
 
-import contractConfig from '../config/contract-config.json';
+import contractConfig from '../config/contract-config.json'
 
 type Props = {
-  pageTitle?: string;
-};
+  pageTitle?: string
+}
 
 export default function Meta({ pageTitle }: Props) {
-  const { nftName } = contractConfig;
-  const router = useRouter();
-  const ogUrl = process.env.NEXT_PUBLIC_SITE_URL + router.asPath;
-  const ogType = router.pathname === '/' ? 'website' : 'article';
+  const { nftName } = contractConfig
+  const router = useRouter()
+  const ogUrl = process.env.NEXT_PUBLIC_SITE_URL + router.asPath
+  const ogType = router.pathname === '/' ? 'website' : 'article'
   const ogTitle = pageTitle
     ? pageTitle
-    : 'An NFT collection of 5,000 unique characters';
-  const ogImage = `${process.env.NEXT_PUBLIC_SITE_URL}/assets/card-image.png`;
-  const description = `${nftName} is an NFT collection of 5,000 unique characters.`;
+    : 'An NFT collection of 5,000 unique characters'
+  const ogImage = `${process.env.NEXT_PUBLIC_SITE_URL}/assets/card-image.png`
+  const description = `${nftName} is an NFT collection of 5,000 unique characters.`
 
   return (
     <Head>
       <title>{`${pageTitle} | ${nftName}`}</title>
-      <link
+      {/* <link
         rel="apple-touch-icon"
         sizes="180x180"
         href="/favicon/apple-touch-icon.png"
@@ -44,7 +44,7 @@ export default function Meta({ pageTitle }: Props) {
         href="/favicon/safari-pinned-tab.svg"
         color="#5bbad5"
       />
-      <link rel="shortcut icon" href="/favicon/favicon.ico" />
+      <link rel="shortcut icon" href="/favicon/favicon.ico" /> */}
       <meta name="msapplication-TileColor" content="#ffc40d" />
       <meta name="msapplication-config" content="/favicon/browserconfig.xml" />
       <meta name="theme-color" content="#ffffff" />
@@ -66,5 +66,5 @@ export default function Meta({ pageTitle }: Props) {
         content={process.env.NEXT_PUBLIC_TWITTER_USERNAME}
       />
     </Head>
-  );
+  )
 }

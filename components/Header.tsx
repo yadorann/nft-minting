@@ -14,7 +14,7 @@ export default function Header() {
   const contractAddress = getContractAddress(chainIdHex)
 
   return (
-    <div className="sticky top-0 z-50">
+    <div className="absolute w-screen top-0 z-50">
       <header className="min-w-full text-gray-800 py-4 px-4 md:px-0">
         <Container>
           <div className="flex justify-between items-center">

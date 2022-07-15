@@ -1,7 +1,7 @@
 type Props = {
-  children: React.ReactNode;
-};
+  children: React.ReactNode
+}
 
 export default function Prose({ children }: Props) {
-  return <div>{children}</div>;
+  return <div>{children}</div>
 }
