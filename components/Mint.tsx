@@ -52,7 +52,7 @@ const sales: SaleType[] = [
   {
     saleType: 'OG SALE',
     step: 0,
-    amount: 700,
+    amount: 600,
     price: '50000000000000000',
     //real starttime
     saleStartTime: 1657888200,
@@ -78,7 +78,7 @@ const sales: SaleType[] = [
     price: '74000000000000000',
     //real starttime
     saleStartTime: 1657895400,
-    saleEndTime: 1657899000
+    saleEndTime: 1657981800
     // saleStartTime: 1657879137,
     // saleEndTime: 1657886337
   },
@@ -92,7 +92,7 @@ const sales: SaleType[] = [
   }
 ]
 
-const SALE_END_TIME = 1657899000
+const SALE_END_TIME = 1657981800
 // const SALE_END_TIME = 1657931400
 const getSale = () => {
   const currentTime = Math.floor(new Date().getTime() / 1000)
