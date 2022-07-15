@@ -52,10 +52,10 @@ const sales: SaleType[] = [
     amount: 700,
     price: '50000000000000000',
     //real starttime
-    saleStartTime: 1657888200,
-    saleEndTime: 1657891800
-    // saleStartTime: 1657879137,
-    // saleEndTime: 1657886337
+    // saleStartTime: 1657888200,
+    // saleEndTime: 1657891800
+    saleStartTime: 1657879137,
+    saleEndTime: 1657886337
   },
   {
     saleType: 'WHITELIST SALE',
@@ -74,10 +74,10 @@ const sales: SaleType[] = [
     amount: 5000,
     price: '74000000000000000',
     //real starttime
-    // saleStartTime: 1657895400,
-    // saleEndTime: 1657899000
-    saleStartTime: 1657879137,
-    saleEndTime: 1657886337
+    saleStartTime: 1657895400,
+    saleEndTime: 1657899000
+    // saleStartTime: 1657879137,
+    // saleEndTime: 1657886337
   },
   {
     saleType: 'SALE END!',
@@ -132,8 +132,8 @@ export default function Mint() {
 
   const dispatch = useNotification()
 
-  // const address = '0xCf818F1453F13d8B1E93a907dB67E0Fb6cd061B3'
-  const address = '0xE3E819593300001842AeD39165680E584Cb7AEaB'
+  const address = '0xCf818F1453F13d8B1E93a907dB67E0Fb6cd061B3'
+  // const address = '0xE3E819593300001842AeD39165680E584Cb7AEaB'
 
   const [contract, setContract] = useState<Contract>()
 
@@ -144,11 +144,17 @@ export default function Mint() {
   }, [isWeb3Enabled])
 
   useEffect(() => {
-    if (contract && isWeb3Enabled && isChainIdIncluded) {
+    if (contract && isWeb3Enabled) {
       //OG sale
-      if (currentSale.saleType === 'OG SALE') mintListAddress()
+      if (currentSale.saleType === 'OG SALE') {
+        mintListAddress()
+        mintableAmount()
+      }
       //Whitelist sale
-      else if (currentSale.saleType === 'WHITELIST SALE') whiteListAddress()
+      else if (currentSale.saleType === 'WHITELIST SALE') {
+        whiteListAddress()
+        mintableAmount()
+      }
       //Public sale
       else if (currentSale.saleType === 'PUBLIC SALE') {
         setMintAmount(1)
@@ -156,16 +162,26 @@ export default function Mint() {
         setMintPrice(price)
         setTotalPrice(price)
 
+        mintableAmount()
+
         setMaxMintAmountPerTx(20)
-      } else setMaxMintAmountPerTx(0)
+      } else {
+        setMaxMintAmountPerTx(0)
+        return
+      }
       // cleanup
       return () => {
         setMintPrice(0)
         setMaxMintAmountPerTx(2)
       }
     }
-  }, [contract, isChainIdIncluded, isWeb3Enabled])
-
+  }, [contract, isWeb3Enabled])
+  const mintableAmount = async () => {
+    if (!contract) return
+    const BN = await contract.getMintableAmount(currentSale.step)
+    const mintableAmount = parseInt(BigInt(BN).toString())
+    setRemainAmount(mintableAmount)
+  }
   const mintListAddress = async () => {
     if (!contract) return
     const mintAmount = await contract.mintListAddress(account)
@@ -251,7 +267,6 @@ export default function Mint() {
       })
       setTxHash(tx.hash)
       const receipt = await tx.wait()
-      console.log(receipt)
       if (receipt.status === 0) {
         throw new Error('Failed')
       } else {
@@ -315,7 +330,7 @@ export default function Mint() {
   return (
     <>
       <div className="flex overflow-hidden  items-center justify-center pt-20 w-[90vw] md:h-full md:w-full px-2 md:px-10">
-        {/* {chainIdHex && chainIdHex !== '0x1' && (
+        {chainIdHex && chainIdHex !== '0x1' && (
           <>
             <div className="fixed top-0 left-0 w-screen h-screen z-10 bg-black/80" />
             <div className="absolute flex w-screen justify-center align-middle items-center">
@@ -331,7 +346,7 @@ export default function Mint() {
               </div>
             </div>
           </>
-        )} */}
+        )}
         {txHash && (
           <>
             <div className="fixed top-0 left-0 w-screen h-screen z-10 bg-black/80" />
@@ -396,6 +411,7 @@ export default function Mint() {
                 <button
                   className="w-14 h-10 md:w-16 md:h-12 flex items-center justify-center text-brand-background hover:shadow-lg bg-gray-300 font-bold rounded-md"
                   disabled={
+                    !remainAmount ||
                     currentSale.saleType === 'SALE NOT STARTED' ||
                     currentSale.saleType === 'SALE END!'
                   }
@@ -424,6 +440,7 @@ export default function Mint() {
                 <button
                   className="w-14 h-10 md:w-16 md:h-12 flex items-center justify-center text-brand-background hover:shadow-lg bg-gray-300 font-bold rounded-md"
                   disabled={
+                    !remainAmount ||
                     currentSale.saleType === 'SALE NOT STARTED' ||
                     currentSale.saleType === 'SALE END!'
                   }
@@ -471,12 +488,14 @@ export default function Mint() {
             {contract ? (
               <button
                 className={`font-coiny mt-5 ${
+                  remainAmount &&
                   maxMintAmountPerTx &&
                   currentSale.saleType !== 'SALE NOT STARTED' &&
                   currentSale.saleType !== 'SALE END!'
                     ? 'bg-red-500'
                     : 'bg-gray-500'
                 } w-full px-6 py-3 rounded-md text-2xl  ${
+                  remainAmount &&
                   maxMintAmountPerTx &&
                   currentSale.saleType !== 'SALE NOT STARTED' &&
                   currentSale.saleType !== 'SALE END!'
@@ -484,9 +503,9 @@ export default function Mint() {
                     : 'text-gray'
                 }   mx-4 tracking-wide uppercase`}
                 disabled={
+                  !remainAmount ||
                   !mintAmount ||
                   !isWeb3Enabled ||
-                  !isChainIdIncluded ||
                   currentSale.saleType === 'SALE NOT STARTED' ||
                   currentSale.saleType === 'SALE END!'
                 }
