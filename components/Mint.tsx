@@ -43,6 +43,7 @@ const sales: SaleType[] = [
     step: 0,
     amount: 0,
     price: '0',
+    //real start time
     // saleStartTime: 0,
     // saleEndTime: 1657888200
     saleStartTime: 0,
@@ -65,10 +66,10 @@ const sales: SaleType[] = [
     amount: 2700,
     price: '60000000000000000',
     //real starttime
-    // saleStartTime: 1657891800,
-    // saleEndTime: 1657895400
-    saleStartTime: 1657879137,
-    saleEndTime: 1657886337
+    saleStartTime: 1657891800,
+    saleEndTime: 1657895400
+    // saleStartTime: 1657879137,
+    // saleEndTime: 1657886337
   },
   {
     saleType: 'PUBLIC SALE',
@@ -76,10 +77,10 @@ const sales: SaleType[] = [
     amount: 5000,
     price: '74000000000000000',
     //real starttime
-    saleStartTime: 1657895400,
-    saleEndTime: 1657899000
-    // saleStartTime: 1657879137,
-    // saleEndTime: 1657886337
+    // saleStartTime: 1657895400,
+    // saleEndTime: 1657899000
+    saleStartTime: 1657879137,
+    saleEndTime: 1657886337
   },
   {
     saleType: 'SALE END!',
