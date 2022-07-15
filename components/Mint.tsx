@@ -44,7 +44,6 @@ const sales: SaleType[] = [
     amount: 0,
     price: '0',
     saleStartTime: 0,
-    // saleEndTime: 1657888200
     saleEndTime: 1657879137
   },
   {
@@ -52,29 +51,31 @@ const sales: SaleType[] = [
     step: 0,
     amount: 700,
     price: '50000000000000000',
-    // saleStartTime: 1657888200,
-    // saleEndTime: 1657891800
-    saleStartTime: 1657879137,
-    saleEndTime: 1657886337
+    //real starttime
+    saleStartTime: 1657888200,
+    saleEndTime: 1657891800
+    // saleStartTime: 1657879137,
+    // saleEndTime: 1657886337
   },
   {
     saleType: 'WHITELIST SALE',
     step: 1,
     amount: 2700,
     price: '60000000000000000',
-    saleStartTime: 1657891800,
-    saleEndTime: 1657895400
-    // saleStartTime: 1657822980,
-    // saleEndTime: 1657826580
+    //real starttime
+    // saleStartTime: 1657891800,
+    // saleEndTime: 1657895400
+    saleStartTime: 1657879137,
+    saleEndTime: 1657886337
   },
   {
     saleType: 'PUBLIC SALE',
     step: 2,
     amount: 5000,
     price: '74000000000000000',
+    //real starttime
     saleStartTime: 1657895400,
     saleEndTime: 1657899000
-
     // saleStartTime: 1657879137,
     // saleEndTime: 1657882737
   },
